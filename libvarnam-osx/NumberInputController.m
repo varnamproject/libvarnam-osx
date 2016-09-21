@@ -91,7 +91,17 @@ Here are the three approaches:
 		if ( isDecimal ) {
 			// If the input text is part of a decimal number.  Add it to the original buffer, and return that we handled it.
 			[self originalBufferAppend:string client:sender];
-			inputHandled = YES;
+            extern IMKCandidates*		candidates;
+            if ( candidates ) {
+//                NSFileHandle *myHandle = [NSFileHandle fileHandleForWritingAtPath:@"/tmp/ime.log"];
+//                [myHandle seekToEndOfFile];
+//                [myHandle writeData:[@"Inside candidates....." dataUsingEncoding:NSUTF8StringEncoding]];
+                _currentClient = sender;
+                [candidates updateCandidates];
+                                //[sender setNextResponder:sender];
+                [candidates show:kIMKLocateCandidatesBelowHint];
+            }
+			inputHandled = NO;
 		}
 		else {
 			// If the input isn't part of a decimal number see if we need to convert the previously input text.
@@ -303,14 +313,18 @@ Here are the three approaches:
 	NSNumberFormatterStyle	currentStyle = [ engine conversionMode];
 	NSInteger				index;
 	NSString*				originalString = [self originalBuffer];
+
+    [theCandidates addObject:originalString];
+    [theCandidates addObject:@"First item"];
+    [theCandidates addObject:@"Second item"];
     
 
 	// Build the array of candidates by converting the original text for each mode
-	for ( index = NSNumberFormatterDecimalStyle; index < NSNumberFormatterSpellOutStyle+1; index++ ) {
-		[engine setConversionMode:index];
-		[theCandidates addObject:[engine convert:originalString]];
-	}
-	[engine setConversionMode:currentStyle];
+//	for ( index = NSNumberFormatterDecimalStyle; index < NSNumberFormatterSpellOutStyle+1; index++ ) {
+//		[engine setConversionMode:index];
+//		[theCandidates addObject:[engine convert:originalString]];
+//	}
+//	[engine setConversionMode:currentStyle];
 	return theCandidates;
 	
 }
